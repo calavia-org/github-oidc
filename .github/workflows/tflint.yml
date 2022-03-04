@@ -1,9 +1,7 @@
-name: tflint
+name: TFLint
 
 on:
   pull_request:
-    branches:
-      - main
 
 jobs:
   tflint-serverless:
@@ -13,7 +11,7 @@ jobs:
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v1
         with:
-          tflint_version: v0.29.0
+          tflint_version: v0.34.1
       - name: Install Terraform plugins
         run: tflint --init
 
