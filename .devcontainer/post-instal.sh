@@ -10,3 +10,7 @@ curl ${LATEST_URL} > /tmp/terraform.zip
 
 cd /usr/local/bin && sudo unzip /tmp/terraform.zip
 echo "Installed: `/usr/local/bin/terraform version`"
+
+pip install --upgrade pip
+pip install pre-commit checkov
+pre-commit install
