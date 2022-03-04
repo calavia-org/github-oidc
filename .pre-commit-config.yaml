@@ -6,4 +6,6 @@ repos:
     - id: terraform_fmt
     - id: terraform_validate
     - id: terraform_tflint
+      args:
+        - --args=--enable-rule=terraform_documented_variables
     - id: terraform_tfsec

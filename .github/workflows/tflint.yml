@@ -1,37 +1,28 @@
-name: TFLint
+name: tflint
+
 on:
-  push:
-    branches: [ master ]
   pull_request:
+    branches:
+      - main
 
 jobs:
-  tflint:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
+  tflint-serverless:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      name: Checkout source code
+      - uses: actions/checkout@v2
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v1
+        with:
+          tflint_version: v0.29.0
+      - name: Install Terraform plugins
+        run: tflint --init
 
-    - uses: actions/cache@v2
-      name: Cache plugin dir
-      with:
-        path: ~/.tflint.d/plugins
-        key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
+      - name: Lint Terraform files
+        run: tflint -f junit > tflint_report.xml
 
-    - uses: terraform-linters/setup-tflint@v1
-      name: Setup TFLint
-      with:
-        tflint_version: v0.29.0
-
-    - name: Show version
-      run: tflint --version
-
-    - name: Init TFLint
-      run: tflint --init
-
-    - name: Run TFLint
-      run: tflint -f compact
+      - name: Publish test report
+        uses: mikepenz/action-junit-report@v2
+        # Only run this step on failure
+        if: ${{ failure() }}
+        with:
+          report_paths: cfn_lint_report.xml
